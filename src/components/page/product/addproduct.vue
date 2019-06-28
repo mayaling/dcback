@@ -2,135 +2,6 @@
         <div class="table" v-loading="loading" element-loading-text="加载中">
             <div class="container">
                 <div class="container-title">新建产品</div>
-                <!-- <el-form :model="form" ref="form" :rules="rules" class="item-add-list">
-                        <el-row :gutter="10" class="clearfix">
-                            <el-col :span="12">
-                                <el-form-item label="产品名称:" prop="projectNo">
-                                <el-input v-model.trim="form.projectNo" type="text"></el-input>
-                              </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="描述:" prop="projectName">
-                                <el-input v-model.trim="form.projectName"></el-input>
-                              </el-form-item>
-                            </el-col>                   
-                        </el-row>
-                        <el-row :gutter="10" class="clearfix">
-                            <el-col :span="12">
-                                <el-form-item label="日利率" prop="amt">
-                                <el-input v-model.trim="form.amt" placeholder="例如0.03%"></el-input>
-                              </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="申请人数" prop="memo">
-                                <el-input v-model.trim="form.memo"></el-input>
-                              </el-form-item>
-                            </el-col>
-                        </el-row>               
-                        <el-row :gutter="10" class="clearfix">
-                            <el-col :span="12">
-                                <el-form-item label="放款时长" prop="startDate">
-                                    <el-input v-model.trim="form.memo" placeholder="2000-50000"></el-input>
-                              </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="申请金额范围" prop="startDate">
-                                    <el-input v-model.trim="form.memo"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>               
-                        <el-row :gutter="10" class="clearfix">
-                                <el-col :span="12">
-                                    <el-form-item label="申请最高价" prop="startDate">
-                                            <el-input-number v-model="num2" controls-position="right" :min="1"></el-input-number>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="贷款最大周期（天）" prop="startDate">
-                                            <el-input-number v-model="num1" controls-position="right" :min="1"></el-input-number>
-
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>     
-                            <el-row :gutter="10" class="clearfix">
-                                    <el-col :span="12">
-                                        <el-form-item label="产品链接:" prop="projectNo">
-                                        <el-input v-model.trim="form.projectNo" type="text"></el-input>
-                                      </el-form-item>
-                                    </el-col>
-                                    <el-col :span="12">
-                                        <el-form-item label="是否必下款:" prop="projectName">
-                                            <el-select v-model="form.region" placeholder="否">
-                                                <el-option label="是" value="shanghai"></el-option>
-                                                <el-option label="否" value="beijing"></el-option>
-                                            </el-select>
-                                      </el-form-item>
-                                    </el-col>                   
-                                </el-row>
-                                <el-row :gutter="10" class="clearfix">
-                                        <el-col :span="12">
-                                            <el-form-item label="热门:" prop="projectNo">
-                                                    <el-select v-model="form.region" placeholder="否">
-                                                            <el-option label="是" value="shanghai"></el-option>
-                                                            <el-option label="否" value="beijing"></el-option>
-                                                        </el-select>
-                                          </el-form-item>
-                                        </el-col>
-                                        <el-col :span="12">
-                                            <el-form-item label="状态:" prop="projectName">
-                                                    <el-select v-model="form.region" placeholder="正常">
-                                                            <el-option label="正常" value="shanghai"></el-option>
-                                                            <el-option label="下架" value="beijing"></el-option>
-                                                        </el-select>
-                                          </el-form-item>
-                                        </el-col>                   
-                                    </el-row>
-                                    <el-row :gutter="10" class="clearfix">
-                                            <el-col :span="12">
-                                                <el-form-item label="排序:" prop="projectNo">
-                                            <el-input-number v-model="num3" controls-position="right" :min="1"></el-input-number>
-                                            <span style="color:#999">数字越大越靠前,最小 0, 最大 100</span>
-                                              </el-form-item>
-                                            </el-col>
-                                            <el-col :span="12">
-                                                <el-form-item label="系统平台:" prop="projectName">
-                                                        <el-select v-model="form.region" placeholder="正常">
-                                                                <el-option label="正常" value="shanghai"></el-option>
-                                                                <el-option label="下架" value="beijing"></el-option>
-                                                            </el-select>
-                                              </el-form-item>
-                                            </el-col>                   
-                                        </el-row>    
-                                        <el-row :gutter="10" class="clearfix">
-                                                <el-col :span="12">
-                                                    <el-form-item label="用户单价:" prop="projectNo">
-                                                    <el-input v-model.trim="form.projectNo" type="text"></el-input>
-                                                  </el-form-item>
-                                                </el-col>
-                                                <el-col :span="12">
-                                                    <el-form-item label="上传图片:" prop="projectName">
-                                                            <el-upload
-                                                            class="upload-demo"
-                                                            action="https://jsonplaceholder.typicode.com/posts/"
-                                                            :on-preview="handlePreview"
-                                                            :on-remove="handleRemove"
-                                                            :file-list="fileList"
-                                                            list-type="picture">
-                                                            <el-button size="small" type="primary">点击上传</el-button>
-                                                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                                                          </el-upload>
-                                                  </el-form-item>
-                                                </el-col>                   
-                                            </el-row>          
-                        <el-row :gutter="10" class="clearfix">
-                            
-                          <el-col :span="20" :offset="4">
-                            <el-button type="primary" @click="onSubmit('form')" style='margin-top:40px'>保存</el-button>
-                            <el-button @click="resetForm('form')">重置</el-button>
-                          </el-col>
-                        </el-row>
-                </el-form> -->
-
                 <el-row type="flex" class="row-bg" justify="space-around">
                     <el-col :span="6">
                             <el-form :model="form" ref="form" :rules="rules" class="item-add-list" :data="tableData">
@@ -153,48 +24,48 @@
                                      
                               
                                             <el-form-item label="放款时长" prop="lending_time">
-                                                <el-input v-model.trim="form.lending_time" placeholder="2000-50000"></el-input>
+                                                <el-input v-model.trim="form.lending_time"></el-input>
                                           </el-form-item>
                                       
-                                            <el-form-item label="申请金额范围" prop="startDate">
-                                                <el-input v-model.trim="form.memo"></el-input>
+                                            <el-form-item label="申请金额范围" prop="apply_price">
+                                                <el-input v-model.trim="form.apply_price"></el-input>
                                             </el-form-item>
                                       
-                                                <el-form-item label="申请最高价" prop="startDate">
-                                                        <el-input-number v-model="num2" controls-position="right" :min="1"></el-input-number>
+                                                <el-form-item label="申请最高价" prop="max_price">
+                                                        <el-input-number v-model="form.max_price" controls-position="right" :min="1"></el-input-number>
                                                     <!-- <el-input v-model.trim="form.memo" placeholder="2000-50000"></el-input> -->
                                               </el-form-item>
                                            
-                                                <el-form-item label="贷款最大周期（天）" prop="startDate">
-                                                        <el-input-number v-model="num1" controls-position="right" :min="1"></el-input-number>
+                                                <el-form-item label="贷款最大周期（天）" prop="max_duration">
+                                                        <el-input-number v-model="form.max_duration" controls-position="right" :min="1"></el-input-number>
             
                                                 </el-form-item>
                                            
-                                                    <el-form-item label="产品链接:" prop="projectNo">
-                                                    <el-input v-model.trim="form.projectNo" type="text"></el-input>
+                                                    <el-form-item label="产品链接:" prop="url">
+                                                    <el-input v-model.trim="form.url" type="text"></el-input>
                                                   </el-form-item>
                                            
-                                                    <el-form-item label="是否必下款:" prop="projectName">
+                                                    <!-- <el-form-item label="是否必下款:" prop="projectName">
                                                         <el-select v-model="form.region" placeholder="否">
                                                             <el-option label="是" value="shanghai"></el-option>
                                                             <el-option label="否" value="beijing"></el-option>
                                                         </el-select>
-                                                  </el-form-item>
+                                                  </el-form-item> -->
                                              
-                                                        <el-form-item label="热门:" prop="projectNo">
-                                                                <el-select v-model="form.region" placeholder="否">
-                                                                        <el-option label="是" value="shanghai"></el-option>
-                                                                        <el-option label="否" value="beijing"></el-option>
+                                                        <el-form-item label="热门:" prop="hot">
+                                                                <el-select v-model="form.hot" placeholder="否">
+                                                                        <el-option label="是" value="1"></el-option>
+                                                                        <el-option label="否" value="0"></el-option>
                                                                     </el-select>
                                                       </el-form-item>
-                                                        <el-form-item label="状态:" prop="projectName">
-                                                                <el-select v-model="form.region" placeholder="正常">
-                                                                        <el-option label="正常" value="shanghai"></el-option>
-                                                                        <el-option label="下架" value="beijing"></el-option>
+                                                        <el-form-item label="状态:" prop="status">
+                                                                <el-select v-model="form.status" placeholder="正常">
+                                                                        <el-option label="正常" value="1"></el-option>
+                                                                        <el-option label="下架" value="0"></el-option>
                                                                     </el-select>
                                                       </el-form-item>
-                                                            <el-form-item label="排序:" prop="projectNo">
-                                                        <el-input-number v-model="num3" controls-position="right" :min="1"></el-input-number>
+                                                            <el-form-item label="排序:" prop="sort">
+                                                        <el-input-number v-model="form.sort" controls-position="right" :min="1"></el-input-number>
                                                         <span style="color:#999">数字越大越靠前,最小 0, 最大 100</span>
                                                           </el-form-item>
                                                             <el-form-item label="系统平台:" prop="projectName">
@@ -211,6 +82,8 @@
                                                                         <el-button size="small" type="primary">点击上传</el-button>
                                                                         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                                                       </el-upload>
+                                                                      <!-- <p v-show="false" ></p> -->
+                                                                      <el-input v-show="false" v-model.trim="imageurl"></el-input>
                                                               </el-form-item>
                                     <el-row :gutter="10" class="clearfix">
                                         
@@ -242,18 +115,25 @@
                 }
             };
             return {
-                num1: 14,
-                num2: 50000,
-                num3: 100,
+                // num1: 14,
+                // num2: 50000,
+                // num3: 100,
                 form: {
-                    projectNo: "",
-                    projectName: "",
-                    startDate: "",
-                    expDate: "",
-                    amt: "",
-                    memo: "",
+                    name: "",
+                    image: "",
+                    desc: "",
+                    max_price: "50000",
+                    apply_price: "",
+                    rate: "",
+                    lending_time: "",
+                    max_duration: "14",
+                    url: "",
+                    hot: "",
+                    sort: "100",
+                    status: "",
                 },
                 tabledata:"",
+                imageurl:"",
                 rules: {
                     projectNo: [{
                         required: true,
@@ -295,24 +175,31 @@
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$post('projects', {
-                            projectNo: this.form.projectNo,
-                            projectName: this.form.projectName,
-                            startDate: this.form.startDate,
-                            expDate: this.form.expDate,
-                            amt: this.form.amt,
-                            memo: this.form.memo,
+                        this.$put('products', {
+                            name: this.form.name,
+                            image: this.imageurl,
+                            desc: this.form.desc,
+                            max_price: this.form.max_price,
+                            apply_price: this.form.apply_price,
+                            rate: this.form.rate,
+                            lending_time: this.form.lending_time,
+                            max_duration: this.form.max_duration,
+                            url: this.form.url,
+                            hot: this.form.hot,
+                            sort: this.form.sort,
+                            status: this.form.status,
                         }).then((res) => {
-                            if (res.code === 0) {
-                                this.$message({
-                                    message: res.msg,
-                                    type: 'success'
-                                });
-                                this.$emit('closedialog');
-                                // this.$router.push('/projecttable');
-                            } else {
-                                this.$message.error(res.msg);
-                            }
+                            console.log(res)
+                            // if (res.code === 0) {
+                            //     this.$message({
+                            //         message: res.msg,
+                            //         type: 'success'
+                            //     });
+                            //     this.$emit('closedialog');
+                            //     // this.$router.push('/projecttable');
+                            // } else {
+                            //     this.$message.error(res.msg);
+                            // }
                         })
                     } else {
                         return false;
@@ -337,10 +224,10 @@
                   })
                   .then((response)=>{
                       console.log(response)
-                    //   if(response.data.code==0){
-                    //     this.$message.success(`修改第 ${this.idx+1} 行成功`);
-                    //     this.getData()
-                    //   }
+                      if(response.data.code==1){
+                            this.imageurl = response.data.info.url;
+                            console.log(this.imageurl)
+                      }
                   })
                   .catch((response)=>{
                      this.$message.error(response.data);
