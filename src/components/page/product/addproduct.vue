@@ -69,26 +69,26 @@
                                                         <span style="color:#999">数字越大越靠前,最小 0, 最大 100</span>
                                                           </el-form-item>
                                                             <el-form-item label="系统平台:" prop="projectName">
-                                                                    <el-select v-model="form.region" placeholder="正常">
+                                                                    <el-select v-model="form.platform" placeholder="正常">
                                                                             <el-option label="正常" value="shanghai"></el-option>
                                                                             <el-option label="下架" value="beijing"></el-option>
                                                                         </el-select>
                                                           </el-form-item>
-                                                                <el-form-item label="用户单价:" prop="projectNo">
-                                                                <el-input v-model.trim="form.projectNo" type="text"></el-input>
+                                                                <el-form-item label="用户单价:" prop="user_price">
+                                                                <el-input v-model.trim="form.user_price" type="text"></el-input>
                                                               </el-form-item>
-                                                                <el-form-item label="上传图片:">
-                                                                        <el-upload class="upload-demo" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"  list-type="picture" :http-request="addAttachment"> 
+                                                                <el-form-item label="上传图片:" prop="imageList" ref="uploadElemet">
+                                                                        <el-upload class="upload-demo" :on-preview="handlePreview" :on-remove="handleRemove"   :file-list="fileList" list-type="picture" :on-change="handleChange" :http-request="addAttachment"> 
                                                                         <el-button size="small" type="primary">点击上传</el-button>
-                                                                        <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                                                       </el-upload>
-                                                                      <!-- <p v-show="false" ></p> -->
                                                                       <el-input v-show="false" v-model.trim="imageurl"></el-input>
+                                                                      <img v-if="imageshow" :src="form.image" alt="">
                                                               </el-form-item>
                                     <el-row :gutter="10" class="clearfix">
                                         
                                       <el-col :span="20" :offset="4">
-                                        <el-button type="primary" @click="onSubmit('form')" style='margin-top:40px'>保存</el-button>
+                                        <el-button type="primary" v-if="!tableData" @click="onSubmit('form')" style='margin-top:40px'>提交</el-button>
+                                        <el-button type="primary" v-if="tableData" @click="onEdit('form')" style='margin-top:40px'>保存</el-button>
                                         <el-button @click="resetForm('form')">重置</el-button>
                                       </el-col>
                                     </el-row>
@@ -115,6 +115,11 @@
                 }
             };
             return {
+                dialogImageUrl: '',
+                dialogVisible: false,
+                hideUpload: false,
+                limitCount:1,
+                imageList:"",
                 // num1: 14,
                 // num2: 50000,
                 // num3: 100,
@@ -131,7 +136,10 @@
                     hot: "",
                     sort: "100",
                     status: "",
+                    platform:"",
+                    user_price:'',
                 },
+                id:"",
                 tabledata:"",
                 imageurl:"",
                 rules: {
@@ -164,18 +172,52 @@
             }
         },
         created() {
-            this.tabledata = this.$route.query.row;
-            console.log(this.tabledata)
+            this.id = this.$route.query.id
+            if(this.id){
+                this.getformdata();
+                this.imageshow = true;
+            }
         },
         computed: {
 
         },
         methods: {
+            // 编辑进来获取表单的内容
+            getformdata(){
+                this.$get('products/'+this.id,).then((res) => {
+                    console.log(res)
+                    if(res.code===1){
+                        this.tableData = res.info;
+                        console.log(this.tableData)
+                       if(this.tableData.status == 1){
+                        this.tableData.status = "开启"
+                       }else{
+                        this.tableData.status = "关闭"
+                       }
+                       if(this.tableData.hot == 1){
+                        this.tableData.hot = "是"
+                       }else{
+                        this.tableData.hot = "否"
+                       }
+                       if(this.tableData.platform == 1){
+                        this.tableData.platform = "正常"
+                       }else{
+                        this.tableData.platform = "下架"
+                       }
+                        this.form = this.tableData;
+                    }else{
+                        this.$message.error('数据加载失败');
+                    }
+                    this.loading = false
+                }).catch( () => {
+                    this.loading = false
+                })
+            },
             //提交数据
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$put('products', {
+                        this.$post('products', {
                             name: this.form.name,
                             image: this.imageurl,
                             desc: this.form.desc,
@@ -190,16 +232,67 @@
                             status: this.form.status,
                         }).then((res) => {
                             console.log(res)
-                            // if (res.code === 0) {
-                            //     this.$message({
-                            //         message: res.msg,
-                            //         type: 'success'
-                            //     });
-                            //     this.$emit('closedialog');
-                            //     // this.$router.push('/projecttable');
-                            // } else {
-                            //     this.$message.error(res.msg);
-                            // }
+                            if (res.code === 1) {
+                                this.$message({
+                                    message: res.message,
+                                    type: 'success'
+                                });
+                                this.$emit('closedialog');
+                                // this.$router.push('/projecttable');
+                            } else {
+                                this.$message.error(res.message);
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+                // this.$emit('closedialog');  
+            },
+            
+            onEdit(formName) {
+                if(this.form.status == "开启"){
+                        this.form.status = 1
+                       }else{
+                        this.form.status = 0
+                       }
+                       if(this.form.hot == "是"){
+                        this.form.hot = 1
+                       }else{
+                        this.form.hot = 0
+                       }
+                       if(this.form.platform == "正常"){
+                        this.form.platform = 1
+                       }else{
+                        this.form.platform = 0
+                       }
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.$put('products/'+this.id, {
+                            name: this.form.name,
+                            image: this.imageurl,
+                            desc: this.form.desc,
+                            max_price: this.form.max_price,
+                            apply_price: this.form.apply_price,
+                            rate: this.form.rate,
+                            lending_time: this.form.lending_time,
+                            max_duration: this.form.max_duration,
+                            url: this.form.url,
+                            hot: this.form.hot,
+                            sort: this.form.sort,
+                            status: this.form.status,
+                        }).then((res) => {
+                            console.log(res)
+                            if (res.code === 1) {
+                                this.$message({
+                                    message: res.message,
+                                    type: 'success'
+                                });
+                                // this.$emit('closedialog');
+                                // this.$router.push('/projecttable');
+                            } else {
+                                this.$message.error(res.message);
+                            }
                         })
                     } else {
                         return false;
@@ -236,6 +329,24 @@
             },        
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+            imgChange(file, fileList){
+                this.hideUpload = fileList.length >= this.limitCount;
+                if(fileList){
+                    this.$refs['uploadElemet'].clearValidate();
+                }
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+                this.hideUpload = fileList.length >= this.limitCount;
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            handleChange(file, fileList) {
+                this.fileList = fileList.slice(-1);
+                this.imageshow = false;
             }
         }
     }
@@ -245,5 +356,8 @@
 <style>
     .el-input-number--medium {
         width: 100%!important;
+    }
+    .hide .el-upload--picture-card {
+        display: none;
     }
 </style>

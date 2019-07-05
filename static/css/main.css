@@ -566,10 +566,11 @@ font {
     left: 37%;
     width: 281px;
     height: 330px;
-    background: rgb(238, 240, 239);
+    background: rgb(248, 249, 249 ,0.5);
     border-radius: 20px;
     overflow: hidden;
     padding: 36px 92px 0;
+    /* opacity: 0.5; */
 }
 
 .login-title {

@@ -3,13 +3,13 @@
             <div class="container">
                 <div class="container-title">产品列表</div>
                 <div class="mgb20">
-                        <el-row >
-                                <el-col :span="4">
+                        <!-- <el-row >
+                                <el-col :span="12">
                                     <router-link :to="{path:'addproduct'}"><el-button type="primary">+新增产品</el-button></router-link>
                                     
                                 </el-col>
-                                <el-col :span="12" :offset="2">
-                                        <el-row :gutter="20">
+                                <el-col :span="12"  style="float: right">
+                                        <el-row :gutter="20" >
                                                 <el-col :span="6">
                                                         <el-select v-model="region" placeholder="请选择平台">
                                                                 <el-option label="区域一" value="shanghai"></el-option>
@@ -30,10 +30,31 @@
                                                 </el-col>
                                               </el-row>
                                 </el-col>
-                              </el-row>
+                              </el-row> -->
+                              <router-link :to="{path:'addproduct'}"><el-button type="primary">+新增产品</el-button></router-link>
+                              <el-row :gutter="20" style="float: right">
+                                    <el-col :span="6">
+                                            <el-select v-model="region" placeholder="请选择平台">
+                                                    <el-option label="区域一" value="shanghai"></el-option>
+                                                    <el-option label="区域二" value="beijing"></el-option>
+                                                  </el-select>
+                                    </el-col>
+                                    <el-col :span="6">
+                                            <el-select v-model="status" placeholder="请选择状态" @change="search()">
+                                                    <el-option label="已下架" value="0"></el-option>
+                                                    <el-option label="已上架" value="1"></el-option>
+                                                  </el-select>
+                                    </el-col>
+                                    <el-col :span="6">
+                                            <el-input v-model.trim="name" placeholder="请输入产品名称" @keyup.enter.native="search"></el-input>
+                                    </el-col>
+                                    <el-col :span="6">
+                                            <el-button type="primary" icon="el-icon-search"  @click="search()">搜索</el-button>
+                                    </el-col>
+                                  </el-row>
                     </div>
-                <el-table :data="tableData" border size="medium" ref="multipleTable">
-                    <el-table-column prop="id" label="ID" align="center" width="120"></el-table-column>
+                <el-table :data="tableData" border size="medium" ref="multipleTable" stripe>
+                    <el-table-column prop="id" label="ID" align="center" width="50"></el-table-column>
                     <el-table-column prop="name" label="名称" align="center"></el-table-column>
                     <el-table-column prop="image" label="图片" align="center">
                     　<template slot-scope="scope">
@@ -44,7 +65,7 @@
                     <el-table-column prop="apply_num" label="申请人数" align="center"></el-table-column>
                     <el-table-column prop="lending_time" label="放款时长" align="center" width="80"></el-table-column>
                     <el-table-column prop="apply_price" label="放款金额" align="center"></el-table-column>
-                    <el-table-column prop="url" label="链接地址" align="center"></el-table-column>
+                    <el-table-column prop="hidden_url" label="链接地址" align="center" width="500"></el-table-column>
                     <el-table-column prop="create_time" label="时间" align="center"></el-table-column>
                     <el-table-column prop="hot" label="是否热门" align="center">
                         <template slot-scope="scope">
@@ -64,9 +85,9 @@
                     </el-table-column>
                     <el-table-column prop="money" label="余额" align="center"></el-table-column>
                     <el-table-column prop="platform" label="系统平台" align="center"></el-table-column>
-                    <el-table-column label="操作" align="center" width="500">
+                    <el-table-column label="操作" align="center" width="400">
                         <template slot-scope="scope">
-                            <router-link :to="{path:'addproduct',query:{row:scope.row}}">
+                            <router-link :to="{path:'addproduct',query:{id:scope.row.id}}">
                                 <el-button size="mini">
                                    编辑
                                 </el-button>
@@ -79,7 +100,7 @@
                               
                                 <el-button  size="mini" @click="open">充值</el-button>
                              
-                                  <el-button size="mini" @click="dialogFormVisible = true">新增流量详情</el-button>
+                                  <!-- <el-button size="mini" @click="dialogFormVisible = true">新增流量详情</el-button>
 
                                   <el-dialog title="新增流量详情" :visible.sync="dialogFormVisible" width="20%" center>
                                         <el-form :model="form">
@@ -101,7 +122,7 @@
                                             <el-button @click="dialogFormVisible = false">取 消</el-button>
                                             <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
                                         </div>
-                                    </el-dialog>    
+                                    </el-dialog>     -->
                                     <el-button size="mini"  @click="dialogTableVisible = true">流量记录</el-button>
 
                                     <el-dialog title="流量记录" :visible.sync="dialogTableVisible">
@@ -150,10 +171,12 @@
                 tableData: [],
                 cur_page: 1,
                 pages: 0,
+                name:"",
                 s_student: '',
                 s_school: '',
                 s_grade: '',
                 s_klass: '',
+                status:"",
                 // loading: true,
                 region: "",
                 region1: "",
@@ -179,7 +202,7 @@
         },
         methods: {
             getlistdata(){
-                this.$get('products').then((res) => {
+                this.$get('products?sort=-id').then((res) => {
                     console.log(res)
                     if(res.code===1){
                         this.tableData = res.info.items;
@@ -272,21 +295,21 @@
             // 搜索
             search() {
                 this.loading = true
-                this.$get('students', {
-                    studentName: this.s_student
+                this.$get('products', {
+                    status: this.status?this.status:'',
+                    name:this.name?this.name:''
                 }).then((res) => {
-                    if (res.code === 0) {
-                        this.tableData = JSON.parse(JSON.stringify(res.list))
-                        this.pages = res.pages;
-                        for (var i = 0; i < this.tableData.length; i++) {
-                            if (this.tableData[i].sex) {
-                                this.tableData[i].sex = '女'
-                            } else {
-                                this.tableData[i].sex = '男'
-                            }
-                        }
+                    if (res.code === 1) {
+                        this.tableData = JSON.parse(JSON.stringify(res.info.items))
+                        // for (var i = 0; i < this.tableData.length; i++) {
+                        //     if (this.tableData[i].sex) {
+                        //         this.tableData[i].sex = '女'
+                        //     } else {
+                        //         this.tableData[i].sex = '男'
+                        //     }
+                        // }
                     } else {
-                        this.$message.error('学生加载失败');
+                        this.$message.error('数据加载失败');
                     }
                     this.loading = false
                 }).catch(() => {

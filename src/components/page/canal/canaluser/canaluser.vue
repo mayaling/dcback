@@ -4,14 +4,14 @@
             <div class="container-title">产品数据</div>
             <router-link :to="{path:'addcanaluser'}"><el-button type="primary" style="margin-bottom:20px;">+新建渠道用户</el-button></router-link>
             <el-table :data="tableData" border size="medium" ref="multipleTable">
-                    <el-table-column prop="id" label="UID" align="center" width="120"></el-table-column>
+                    <el-table-column prop="id" label="ID" align="center" width="120"></el-table-column>
                     <el-table-column prop="name" label="账号" align="center"></el-table-column>
                     <el-table-column prop="type" label="角色类型" align="center"></el-table-column>
                     <el-table-column prop="register_time" label="注册时间" align="center"></el-table-column>
                     <el-table-column prop="status" label="状态" align="center"></el-table-column>
                     <el-table-column label="操作" align="center" width="110">
                         <template slot-scope="scope">
-                            <router-link :to="{path:'addadmin',query:{id:scope.row.id}}" style="color:#35a000;">编辑</router-link>
+                            <router-link :to="{path:'addcanaluser',query:{id:scope.row.id}}" style="color:#35a000;">编辑</router-link>
                         </template>
                     </el-table-column>
                 </el-table>

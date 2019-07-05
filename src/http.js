@@ -3,7 +3,8 @@
 
 axios.defaults.timeout = 15000;
 axios.defaults.baseURL = '';
-var URL = "http://47.103.61.179:82/";
+// var URL = "http://47.103.61.179:82/";
+var URL = "https://api-backend.sshua.com/"
 // var URL = "http://47.92.217.27:7002/"
     // var URL = " https://www.easy-mock.com/mock/5ce796a973277860448263a6/example"
     //var URL = "http://192.168.16.141:7002/"

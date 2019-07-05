@@ -92,3 +92,8 @@
         }
     }
 </script>
+<style>
+.login-wrap{
+    background: url("http://youloan.oss-cn-shanghai.aliyuncs.com/static/css/background.svg");
+}
+</style>

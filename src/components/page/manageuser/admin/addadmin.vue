@@ -51,9 +51,9 @@
                                 <el-form-item label="密码:" prop="password">
                                 <el-input v-model.trim="form.password" type="password"></el-input>
                                 </el-form-item>
-                                <el-form-item label="名称:" prop="name">
+                                <!-- <el-form-item label="名称:" prop="name">
                                     <el-input v-model.trim="form.name" type="text"></el-input>
-                                </el-form-item>
+                                </el-form-item> -->
                                 <el-form-item label="分组:" prop="type">
                                     <el-select v-model="form.type">
                                         <el-option label="管理员" value="1"></el-option>
@@ -67,7 +67,8 @@
                                         <el-option label="关闭" value="0"></el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-button type="primary" @click="onSubmit('form')" style='margin-top:40px'>保存</el-button>
+                                <el-button v-if="!tableData" type="primary" @click="onSubmit('form')" style='margin-top:40px'>提交</el-button>
+                                <el-button v-if="tableData" type="primary" @click="onEdit('form')" style='margin-top:40px'>保存</el-button>
                                 <el-button @click="resetForm('form')">重置</el-button>
                     </el-form>
                 </el-col>
@@ -81,7 +82,7 @@
 
 <script>
     export default {
-        name: 'addproject',
+        name: 'addadmin',
         data() {
             // var re = /^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(198)|(199)|(166)|(165)|(146)|(148))+\d{8})$/;
             var re = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
@@ -99,6 +100,7 @@
                     status: "",
                     type: "",
                 },
+                tableData:"",
                 id:'',
                 data:"",
                 rules: {
@@ -107,11 +109,11 @@
                         message: '不可为空！',
                         trigger: 'blur'
                     }],
-                    password: [{
-                        required: true,
-                        message: '不可为空！',
-                        trigger: 'blur'
-                    }],
+                    // password: [{
+                    //     required: true,
+                    //     message: '不可为空！',
+                    //     trigger: 'blur'
+                    // }],
                     status: [{
                         required: true,
                         validator: "不可为空！",
@@ -156,22 +158,6 @@
                         }else{
                             this.tableData.type = "渠道"
                         }
-                        // for(var i=0;i<this.tableData.length;i++){
-                        //     if(this.tableData[i].status == 1){
-                        //         this.tableData[i].status = "开启"
-                        //     }else{
-                        //         this.tableData[i].status = "关闭"
-                        //     }
-                        // }
-                        // for(var i=0;i<this.tableData.length;i++){
-                        //     if(this.tableData[i].type == 1){
-                        //         this.tableData[i].type = "管理员"
-                        //     }else if(this.tableData[i].type == 2){
-                        //         this.tableData[i].type = "运营"
-                        //     }else{
-                        //         this.tableData[i].type = "渠道"
-                        //     }
-                        // }
                         this.form = this.tableData;
                     }else{
                         this.$message.error('数据加载失败');
@@ -183,26 +169,67 @@
             },
             //提交数据
             onSubmit(formName) {
+               
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.$post('admins', {
                             name: this.form.name,
-                            password: this.form.password,
                             type:this.form.type,
+                            password: this.form.password,
                             status:this.form.status
                         }).then((res) => {
-                            console.log(res)
+                            // console.log(res)
                             if(res.code === 1){
                                 this.$message({
                                     message: res.message,
                                     type: 'success'
                                 });
+                                this.$router.push("/adminlist")
                             }else{
                                 if(!res.info.name){
                                     this.$message.error(res.message);
                                 }else{
                                     this.$message.error(res.info.name[0]);
                                 }
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+                // this.$emit('closedialog');  
+            },
+            // 保存编辑
+            onEdit(formName) {
+              
+                this.$refs[formName].validate((valid) => {
+                        if(this.form.status == "开启"){
+                            this.form.status = 1
+                        }else{
+                            this.form.status = 0
+                        }
+                        if(this.form.type == "管理员"){
+                            this.form.type = 1
+                        }else if(this.form.type == "运营"){
+                            this.form.type = 2
+                        }else{
+                            this.form.type = 3
+                        }
+                    if (valid) {
+                        this.$put('admins/'+this.id, {
+                            name: this.form.name,
+                            password: this.form.password,
+                            type:this.form.type,
+                            status:this.form.status
+                        }).then((res) => {
+                            if(res.code === 1){
+                                this.$message({
+                                    message: res.message,
+                                    type: 'success'
+                                });
+                                this.$router.push("/adminlist")
+                            }else{
+                                this.$message.error(res.message);
                             }
                         })
                     } else {

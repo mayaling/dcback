@@ -2,75 +2,35 @@
         <div class="table" v-loading="loading" element-loading-text="加载中">
             <div class="container">
                 <div class="container-title">新增扣除</div>
-                <!-- <el-form :model="form" ref="form" :rules="rules" class="item-add-list">
-                    <el-row :gutter="10" class="clearfix">
-                        <el-col :span="12">
-                            <el-form-item label="账号:" prop="name">
-                            <el-input v-model.trim="form.name" type="text"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="密码:" prop="password">
-                            <el-input v-model.trim="form.password" type="password"></el-input>
-                            </el-form-item>
-                        </el-col>                   
-                    </el-row>
-                    <el-row :gutter="10" class="clearfix">
-                        <el-col :span="12">
-                            <el-form-item label="分组:" prop="type">
-                                <el-select v-model="form.type" placeholder="管理员">
-                                    <el-option label="管理员" value="1"></el-option>
-                                    <el-option label="运营" value="2"></el-option>
-                                    <el-option label="渠道" value="3"></el-option>
-    
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="状态:" prop="status">
-                                <el-select v-model="form.status" placeholder="关闭">
-                                    <el-option label="开启" value="1"></el-option>
-                                    <el-option label="关闭" value="0"></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>               
-                    <el-row :gutter="10" class="clearfix">
-                        <el-col :span="20" :offset="4">
-                            <el-button type="primary" @click="onSubmit('form')" style='margin-top:40px'>保存</el-button>
-                            <el-button @click="resetForm('form')">重置</el-button>
-                        </el-col>
-                    </el-row>
-                </el-form> -->
                 <el-row type="flex" class="row-bg" justify="space-around">
                     <el-col :span="6">
                             <el-form :model="form" ref="form" :rules="rules" class="item-add-list">
-                                    <el-form-item label="渠道:" prop="status">
-                                            <el-select v-model="form.status" placeholder="请选择渠道">
-                                                <el-option label="1" value="1"></el-option>
-                                                <el-option label="2" value="0"></el-option>
+                                    <el-form-item label="渠道:" prop="channel_id">
+                                            <el-select v-model="form.channel_id" placeholder="请选择渠道">
+                                                    <template v-for="item in channeldata">
+                                                <el-option :label="item.name" :value="item.id"></el-option>
+                                             </template> 
                                             </el-select>
                                         </el-form-item>
-                                    <el-form-item label="扣除后的比例:" prop="name">
-                                    <el-input v-model.trim="form.name" type="text"></el-input>
+                                    <el-form-item label="扣除后的比例:" prop="deduct">
+                                    <el-input v-model.trim="form.deduct" type="text"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="日期:" prop="time">
-                                            <el-date-picker
-                                            v-model="time"
-                                            type="date"
-                                            placeholder="选择日期">
+                                    <el-form-item label="日期:" prop="date_time">
+                                            <el-date-picker  v-model="form.date_time" type="date" placeholder="选择日期">
                                           </el-date-picker>
                                         <!-- <el-input v-model.trim="form.name" type="text"></el-input> -->
                                     </el-form-item>
-                                    <el-form-item label="状态:" prop="type">
-                                        <el-select v-model="form.type" placeholder="请选择状态">
+                                    <el-form-item label="状态:" prop="status">
+                                        <el-select v-model="form.status" placeholder="请选择状态">
                                             <el-option label="启用" value="1"></el-option>
-                                            <el-option label="禁用" value="2"></el-option>
+                                            <el-option label="禁用" value="0"></el-option>
         
                                         </el-select>
                                     </el-form-item>
                                    
-                                    <el-button type="primary" @click="onSubmit('form')" style='margin-top:40px'>保存</el-button>
+                                    <el-button type="primary" v-if="!tableData" @click="onSubmit('form')" style='margin-top:40px'>提交</el-button>
+                                    <el-button type="primary" v-if="tableData" @click="onEdit('form')" style='margin-top:40px'>保存</el-button>
+
                                     <el-button @click="resetForm('form')">重置</el-button>
                         </el-form>
                     </el-col>
@@ -97,14 +57,16 @@
                 };
                 return {
                     form: {
-                        name: "",
-                        password: "",
+                        deduct: "",
+                        date_time: "",
                         status: "",
-                        type: "",
+                        channel_id:""
                     },
                     time:"",
                     id:'',
                     data:"",
+                    channeldata:"",
+                    tableData:"",
                     rules: {
                         name: [{
                             required: true,
@@ -116,11 +78,11 @@
                             message: '不可为空！',
                             trigger: 'blur'
                         }],
-                        status: [{
-                            required: true,
-                            validator: "不可为空！",
-                            trigger: 'blur'
-                        }],
+                        // status: [{
+                        //     required: true,
+                        //     validator: "不可为空！",
+                        //     trigger: 'blur'
+                        // }],
                         type: [{
                             required: true,
                             message: '不可为空！',
@@ -130,6 +92,7 @@
                 }
             },
             created() {
+                this.getchanneldata();
                 this.id = this.$route.query.id
                 // this.row = this.$route.query.row
                 // console.log(this.row)
@@ -141,29 +104,26 @@
     
             },
             methods: {
+                getchanneldata(){
+                    this.$get('channels').then((res) => {
+                        if(res.code === 1){
+                            this.channeldata = res.info.items;
+                        }
+                        // console.log(res)
+                    }).catch( () => {
+
+                    })
+                },
                 // 编辑进来获取表单的内容
                 getformdata(){
-                    this.$get('admins?type=1,2',{ id:this.id }).then((res) => {
-                        console.log(res)
-                        if(res.code===1){
-                            this.tableData = res.info.items[0];
+                    this.$get('deducts/'+this.id).then((res) => {
+                        if(res.code === 1){
+                            this.tableData = res.info;
                             console.log(this.tableData)
-                           
-                            for(var i=0;i<this.tableData.length;i++){
-                                if(this.tableData[i].status == 1){
-                                    this.tableData[i].status = "开启"
-                                }else{
-                                    this.tableData[i].status = "关闭"
-                                }
-                            }
-                            for(var i=0;i<this.tableData.length;i++){
-                                if(this.tableData[i].type == 1){
-                                    this.tableData[i].type = "管理员"
-                                }else if(this.tableData[i].type == 2){
-                                    this.tableData[i].type = "运营"
-                                }else{
-                                    this.tableData[i].type = "渠道"
-                                }
+                            if(this.tableData.status == 1){
+                                this.tableData.status = "开启"
+                            }else{
+                                this.tableData.status = "关闭"
                             }
                             this.form = this.tableData;
                         }else{
@@ -178,10 +138,10 @@
                 onSubmit(formName) {
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            this.$post('admins', {
-                                name: this.form.name,
-                                password: this.form.password,
-                                type:this.form.type,
+                            this.$post('deducts', {
+                                channel_id: this.form.channel_id,
+                                deduct: this.form.deduct,
+                                date_time:this.form.date_time,
                                 status:this.form.status
                             }).then((res) => {
                                 console.log(res)
@@ -190,12 +150,45 @@
                                         message: res.message,
                                         type: 'success'
                                     });
+                                    this.$router.push("/deduct")
                                 }else{
                                     if(!res.info.name){
                                         this.$message.error(res.message);
                                     }else{
                                         this.$message.error(res.info.name[0]);
                                     }
+                                }
+                            })
+                        } else {
+                            return false;
+                        }
+                    });
+                    // this.$emit('closedialog');  
+                },
+                
+                onEdit(formName) {
+                    if(this.form.status == "开启"){
+                            this.form.status = 1
+                        }else{
+                            this.form.status = 0
+                        }
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            this.$put('deducts/'+this.id, {
+                                channel_id: this.form.channel_id,
+                                deduct: this.form.deduct,
+                                date_time:this.form.date_time,
+                                status:this.form.status
+                            }).then((res) => {
+                                console.log(res)
+                                if(res.code === 1){
+                                    this.$message({
+                                        message: res.message,
+                                        type: 'success'
+                                    });
+                                    this.$router.push("/deduct")
+                                }else{
+                                    this.$message.error(res.message);
                                 }
                             })
                         } else {

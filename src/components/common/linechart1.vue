@@ -22,16 +22,16 @@
             id: String
         },
         // 如果使用serverData传过来的静态数据 请使用mounted()方法 并注释掉watch
-        mounted() {
-            this.drawChart()
-        },
+        // mounted() {
+        //     this.drawChart()
+        // },
         // 监听API接口传过来的数据 使用watch  2018-08-21更新
-        // watch: {
-        // charData: function (val, oldVal) {    // 监听charData，当发生变化时，触发这个回调函数绘制图表
-        // console.log('new: %s, old: %s', val, oldVal);
-        // this.drawChart(val);
-        // }
-
+        watch: {
+            charData: function (val, oldVal) {    // 监听charData，当发生变化时，触发这个回调函数绘制图表
+                console.log('new: %s, old: %s', val, oldVal);
+                this.drawChart(val);
+            }
+        },
         methods: {
             drawChart: function() {
                 // 2019.03.30 更新 destory方法已被废弃
@@ -46,7 +46,7 @@
                         range: [0, 1]
                     }
                 });
-                this.chart.axis('year', {
+                this.chart.axis('date', {
                     label: {
                         textStyle: {
                             fill: '#aaaaaa'
@@ -63,7 +63,7 @@
                         }
                     }
                 });
-                this.chart.line().position('year*value').color('type', ['#ff4d4f', '#ff7a45', '#ffa940', '#facc14', '#bae637', '#73d13d', '#36cfc9', '#40a9ff']);
+                this.chart.line().position('date*value').color('name', ['#ff4d4f', '#ff7a45', '#ffa940', '#facc14', '#bae637', '#73d13d', '#36cfc9', '#40a9ff']);
                 this.chart.render();
             }
         }

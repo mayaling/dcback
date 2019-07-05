@@ -8,7 +8,7 @@ export default new VueRouter({
     //base:'/dist/',
     routes: [{
             path: '/',
-            redirect: '/login'
+            redirect: '/Dashboard'
         },
         {
             path: '/',
@@ -104,6 +104,15 @@ export default new VueRouter({
                     path: '/dailycanalstatistics',
                     component: resolve => require(['../components/page/statistics/dailycanalstatistics.vue'], resolve),
                     meta: { title: '渠道每日统计', admin: true }
+                }, 
+                {
+                    path: '/channeldaylog',
+                    component: resolve => require(['../components/page/statistics/channeldaylog.vue'], resolve),
+                    meta: { title: '今日实时', admin: true }
+                },{
+                    path: '/channelhistory',
+                    component: resolve => require(['../components/page/statistics/channelhistory.vue'], resolve),
+                    meta: { title: '渠道历史', admin: true }
                 }, {
                     path: '/manageapk',
                     component: resolve => require(['../components/page/app/manageapk.vue'], resolve),

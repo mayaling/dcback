@@ -3,34 +3,25 @@
             <div class="container">
                 <div class="container-title">随手花用户列表</div>
                 <div class="mgb20">
-                        <el-row :gutter="10" class="clearfix">
+                        <el-row :gutter="16" class="clearfix">
                                 <el-col :span="2">
-                                    <el-select v-model="channel" placeholder="请选择渠道">
+                                    <el-select v-model="channel" placeholder="请选择渠道" @change="search" clearable="true" >
                                         <template  v-for="item in channeldata">
                                             <el-option :label="item.name" :value="item.id"></el-option>
                                         </template>
                                     </el-select>
                                 </el-col>
                                 <el-col :span="2">
-                                    <el-select v-model="active" placeholder="请选择激活状态">
+                                    <el-select v-model="active" placeholder="请选择激活状态" @change="search" clearable="true">
                                         <el-option label="已激活" value="1"></el-option>
                                         <el-option label="未激活" value="0"></el-option>
                                     </el-select>
                                 </el-col>
                                 <el-col :span="4">
                                     <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"  format="yyyy 年 MM 月 dd 日"
-                                    value-format="yyyy-MM-dd"></el-date-picker>
+                                    value-format="yyyy-MM-dd" @change="search"></el-date-picker>
                                 </el-col>
-                            <!-- <el-col :span="3">
-                            
-                            <el-date-picker
-                            v-model="value2"
-                            type="date"
-                            placeholder="选择注册时间">
-                          </el-date-picker>
-                        </el-col> -->
                             <el-col :span="2"><el-input v-model.trim="p_phone" placeholder="输入用户手机号" @keyup.enter.native="search"></el-input></el-col>
-                            <!-- <el-col :span="4"><el-input v-model.trim="s_name" placeholder="学生姓名" @keyup.enter.native="search"></el-input></el-col> -->
                             <el-col :span="2"><el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button></el-col>
                             <el-col :span="2"><el-button type="primary" icon="el-icon-search">导出</el-button></el-col>
                         </el-row>
@@ -100,7 +91,7 @@
         },
         methods: {
             getlistdata(){
-                this.$get('users').then((res) => {
+                this.$get('users?sort=-id').then((res) => {
                     console.log(res)
                     if(res.code===1){
                         this.tableData = res.info.items;
@@ -171,8 +162,9 @@
                 this.$get('users', {
                     channel_id: this.channel?this.channel:'',
                     active:this.active?this.active:'',
-                    start_time:this.time[0],
-                    end_time:this.time[1]
+                    start_time:this.time[0]?this.time[0]:'',
+                    end_time:this.time[1]?this.time[1]:'',
+                    mobile:this.p_phone?this.p_phone:'',
                 }).then((res) => {
                     console.log(res)
                     if (res.code === 1) {
